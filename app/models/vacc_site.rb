@@ -1,0 +1,2 @@
+class VaccSite < ApplicationRecord
+end
