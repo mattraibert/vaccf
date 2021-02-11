@@ -1,10 +1,10 @@
 class VaccSite < ApplicationRecord
   def self.any_slots?
     all.map do |site|
-      {id: site.id, type: site.check_handler, slots?: site.has_slots?}
+      {id: site.id, type: site.type, slots?: site.has_slots?}
     rescue => e
       puts e.message
-      {id: site.id, type: site.check_handler, slots?: nil}
+      {id: site.id, type: site.type, slots?: nil}
     end
   end
 
@@ -12,9 +12,7 @@ class VaccSite < ApplicationRecord
     Hashie::Mash.new(JSON.parse(`curl '#{check_url}'`))
   end
 
-  def handler
-    self.check_handler.constantize.new(raw)
+  def render_url
+    format(template, JSON.parse(self.meta).symbolize_keys)
   end
-
-  delegate :has_slots?, :describe_slots, to: :handler
 end
